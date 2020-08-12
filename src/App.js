@@ -1,25 +1,50 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {Fragment, useState, useEffect} from 'react';
+import Header from './components/header';
+import Form from './components/form';
+import NewsList from './components/newslist';
 
 function App() {
+
+  //set Category and news
+  const [category, setCategory] = useState('');
+
+  //Create a state with news
+  const [news, setNews] = useState([]);
+
+  //Call API
+  //Using useEffect will detect any change in "category" and will execute
+  useEffect( ()=> {
+
+    const callAPI = async () => {
+
+      const URL=`https://newsapi.org/v2/top-headlines?country=ar&category=${category}&apiKey=d156456776bc43bbb56ac27a15862c2c`
+      const answer = await fetch(URL);
+      const news = await answer.json();
+      setNews(news.articles);
+    }
+    callAPI(); //Call the function to make the request
+
+  }, [category] )
+
+
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Fragment>
+      <Header 
+        title='News Site'
+      />
+
+      <div className="container white">
+        <Form 
+          setCategory={setCategory}
+        />
+
+        <NewsList 
+          news={news}
+        />
+      </div>
+    </Fragment>
   );
 }
 
